@@ -1,54 +1,109 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import CVisualDom from '@/components/CVisualDom.vue';
-import image from '@/assets/bg.png'
+import { ref, onMounted, watch, nextTick } from 'vue'
+import CVisual from '@/components/CVisual.vue';
+import CDigitalClock from '@/components/CDigitalClock.vue';
+import image from '@/assets/bg2.png'
 // @ts-ignore
 import ColorThief from 'colorthief/dist/color-thief.mjs'
 
 const data = ref<Number[]>([])
 const imageRef = ref<HTMLImageElement>()
-const themeColor = ref<number[]>([255, 255, 255])
+const thumbnailRef = ref<HTMLImageElement>()
+const palette = ref<number[][]>([[]])
+const mediaProperties = ref<WallpaperEngineMediaProperties>()
+const mediaThumbnail = ref<WallpaperEngineMediaThumbnail>()
+const mediaPlayback = ref<WallpaperEngineMediaPlayback>()
+const mediaTimeline = ref<WallpaperEngineMediaTimeline>()
 
-onMounted(() => {
-  const img = imageRef.value!;
-  const colorThief = new ColorThief();
-  if (img.complete) {
-    themeColor.value = colorThief.getColor(img);
-  } else {
-    img.addEventListener('load', () => {
-      themeColor.value = colorThief.getColor(img);
-    });
-  }
+onMounted(async () => {
+  const colors = await getPalette(imageRef.value!);
+  palette.value = colors
 })
-setInterval(() => data.value = Array.from({ length: 128 }, () => Math.random() * 0.1), 33)
-// @ts-ignore
-// window.wallpaperRegisterAudioListener(waveArray => data.value = waveArray);
+
+async function getPalette(img: HTMLImageElement): Promise<number[][]> {
+  await new Promise((resovle, reject) => {
+    if (img.complete) {
+      resovle(null)
+    } else {
+      img.addEventListener('load', () => resovle(null));
+    }
+  })
+  const colorThief = new ColorThief();
+  const primaryColor: number[] = colorThief.getColor(img)
+  const palette: number[][] = colorThief.getPalette(img);
+  // const darkPalette = palette.filter(
+  //   color => color.reduce((a, b) => a + b) < primaryColor.reduce((a, b) => a + b))
+  // darkPalette.unshift(colorThief.getColor(img))
+  // return darkPalette
+  palette.unshift(primaryColor)
+  return palette.sort((ca, cb) => ca.reduce((a, b) => a + b) - cb.reduce((a, b) => a + b))
+}
+const rgbToHex = (r: number, g: number, b: number) => '#' + [r, g, b].map(x => {
+  const hex = x.toString(16)
+  return hex.length === 1 ? '0' + hex : hex
+}).join('')
+const rgbToStr = (r: number, g: number, b: number) => `rgba(${r}, ${g}, ${b}, 1)`;
+const rgbArrToStr = (arr: number[]) => arr.length > 2 ? rgbToStr(arr[0], arr[1], arr[2]) : '';
+const rgbArrToHex = (arr: number[]) => arr.length > 2 ? rgbToHex(arr[0], arr[1], arr[2]) : '';
+
+function getColor(index: number): string {
+  return palette.value && palette.value.length > index ? rgbArrToStr(palette.value[index]) : ''; 
+}
+watch(mediaThumbnail, () =>
+  nextTick(() =>
+    setTimeout(async () =>
+      palette.value = await getPalette(thumbnailRef.value!)
+      , 1000)
+  )
+)
+// setInterval(() => data.value = Array.from({ length: 128 }, () => Math.random() * 0.1), 33)
+
+window.wallpaperRegisterAudioListener && window.wallpaperRegisterAudioListener(waveArray => data.value = waveArray);
+window.wallpaperRegisterMediaStatusListener && window.wallpaperRegisterMediaStatusListener(event => {
+
+});
+window.wallpaperRegisterMediaPropertiesListener && window.wallpaperRegisterMediaPropertiesListener(event => {
+  mediaProperties.value = event;
+});
+window.wallpaperRegisterMediaThumbnailListener && window.wallpaperRegisterMediaThumbnailListener(event => {
+  mediaThumbnail.value = event;
+});
+window.wallpaperRegisterMediaPlaybackListener && window.wallpaperRegisterMediaPlaybackListener(event => {
+  mediaPlayback.value = event;
+});
+window.wallpaperRegisterMediaTimelineListener && window.wallpaperRegisterMediaTimelineListener(event => {
+  mediaTimeline.value = event;
+});
+
 </script>
 
 <template lang="pug">
-main(:style="`--theme-color: rgba(${themeColor[0]}, ${themeColor[1]}, ${themeColor[2]}, 1); --background: url(${image})`")
+main(:style="`--theme-color: ${getColor(0)}; --background: url(${image})`")
   img(ref="imageRef" :src="image" style="display: none;")
-  .background 
+  .background  
   .frontground
-    .divider
-    .title Swift
-    .subtitle I have no fear
-      br 
-      | 我无所畏惧
+    .divider(data-text="by Nyarray")
+    .title {{ mediaProperties?.title ?? 'Unknown' }}
+    .datetime 
+      CDigitalClock(format="hh:mm:ss").time 
+      CDigitalClock(format="yyyy-MM-dd").date
+    .thumbnail(v-if="mediaThumbnail && mediaThumbnail.thumbnail")
+      //- img(:src="`data:image;base64,${mediaThumbnail?.thumbnail ?? ''}`")
+      img(ref="thumbnailRef" :src="mediaThumbnail?.thumbnail ?? ''")
     .info 
       .info-header INFORMATION 
-      .info-text 专辑：Fairy Tale 
-      .info-title 歌手：Synthion 
+      .info-text 专辑：{{ mediaProperties?.albumTitle ?? 'Unknown' }} 
+      .info-title 歌手：{{ mediaProperties?.artist ?? 'Unknown' }} 
       .info-divider  
-      .info-text Ai绘画：Stella
-    .middle 
-      .middle-divider by Nyarray 
-    .start 
-    CVisualDom.divider-visual(:data="data" :lineStyles="{ backgroundColor: 'rgba(64, 118, 178, 1)' }") 
-      //- .start-timer 0:31
-      //- .start-color-
+      //- .info-text Ai绘画：Stella
+      .info-text {{ mediaProperties?.contentType ?? 'Unknown' }} 
+    CVisual.divider-visual(:data="data" :lineStyles="{ backgroundColor: getColor(1) }") 
+    .side
+      .side-color-title Theme
+      .side-color-value(v-if="palette && palette.length > 2")
+        span(v-for="color in palette" :style="{backgroundColor: rgbArrToHex(color)}") {{ rgbArrToHex(color) }}
 </template>  
-
+ 
 <style lang="scss" scoped>
 @font-face {
   font-family: Limerick;
@@ -70,9 +125,33 @@ main(:style="`--theme-color: rgba(${themeColor[0]}, ${themeColor[1]}, ${themeCol
   src: url('@/assets/FunctionPro-Bold.otf');
 }
 
+.side {
+  position: absolute;
+  left: 4%;
+  top: 8%;
+  writing-mode: vertical-rl;
+  background-color: black;
+  color: var(--background-color);
+  padding: .5rem;
+
+}
+
+.thumbnail {
+  position: absolute;
+  width: 128px;
+  height: 128px;
+  right: 4%;
+  top: 28%;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
 main {
   --background-color: rgba(241, 241, 241, 1);
-
   width: 100vw;
   height: 100vh;
   overflow: hidden;
@@ -83,35 +162,45 @@ main {
 .frontground {
   width: 100%;
   height: 100%;
+  transition: .3s ease;
 }
 
 .title {
   position: absolute;
   right: 4%;
   top: 48%;
+  max-width: 40%;
   font-family: Limerick;
   font-size: 72px;
   color: var(--theme-color);
-  font-style: italic;
-
+  font-style: oblique;
 }
 
-.subtitle {
+.datetime {
   position: absolute;
   right: 4%;
-  top: 72%;
-  font-family: Myriad;
-  font-size: 20px;
+  bottom: 10%;
+  line-height: 1.5rem;
   color: var(--theme-color);
+  font-family: Myriad;
   font-style: italic;
   text-align: end;
-  line-height: 24px;
+  transition: .3s ease;
+
+  .time {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: .5rem;
+  }
+
+  .date {
+    font-size: 1.5rem;
+  }
 }
 
 .info {
   --info-padding-right: 4vw;
   --info-text-shadow: 0 0 1px var(--theme-color);
-  // --info-text-shadow: 0.5px 0 0 var(--theme-color), -0.5px 0 0 var(--theme-color), 0 0.5px 0 var(--theme-color), 0 -0.5px 0 var(--theme-color);
   position: absolute;
   right: 0;
   top: 0;
@@ -119,27 +208,28 @@ main {
   color: var(--theme-color);
   text-align: end;
   font-family: Myriad;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bolder;
   font-style: italic;
   z-index: 11;
+  transition: .3s ease;
 
   .info-header {
     padding-right: var(--info-padding-right);
-    font-size: 16px;
+    font-size: 1rem;
     font-family: FunctionPro;
     font-style: normal;
   }
 
   .info-text {
     padding-right: var(--info-padding-right);
-    font-size: 20px;
+    font-size: 1.25rem;
     text-shadow: var(--info-text-shadow);
   }
 
   .info-title {
     padding-right: var(--info-padding-right);
-    font-size: 24px;
+    font-size: 1.5rem;
     text-shadow: var(--info-text-shadow);
   }
 
@@ -158,7 +248,7 @@ main {
   width: 100%;
   height: 100%;
   background-image: var(--background);
-  background-position: -50% 0;
+  background-position: -25% 0;
   background-size: contain;
   overflow: hidden;
 }
@@ -170,7 +260,7 @@ main {
   top: 0;
   width: 100%;
   overflow: hidden;
-  transform: translateX(12%);
+  transform: translateX(8%);
   animation: fade 2s ease-in-out .25s forwards;
   // background-image: linear-gradient(-60deg, var(--background-color) calc(50% - var(--divider) / 2 - 1px), var(--theme-color) calc(50% - var(--divider) / 2), var(--theme-color) calc(50% + var(--divider) / 2), transparent calc(50% + var(--divider) / 2 + 1px));
   background-image: linear-gradient(-60deg, var(--background-color) 50%, transparent 50%);
@@ -186,30 +276,9 @@ main {
 
   .divider {
     position: absolute;
-    width: 3vw;
-    height: calc(100vh + 100vw);
-    transform: rotate(30deg);
-    background-color: var(--theme-color);
+    width: 3rem;
+    height: 100%;
     z-index: 10;
-    // background-image: linear-gradient(-60deg, var(--background-color) calc(50% - var(--divider) / 2 - 1px), var(--theme-color) calc(50% - var(--divider) / 2), var(--theme-color) calc(50% + var(--divider) / 2), transparent calc(50% + var(--divider) / 2 + 1px));
-  }
-
-  .divider-visual {
-    width: 100%;
-    height: 100%;
-    transform: rotate(30deg) translate(calc(50% + 1vw), 0);
-    z-index: 1;
-  }
-
-  .middle {
-    position: absolute;
-    top: 0;
-    left: 30%;
-    width: 40%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
     &::before {
       content: '';
@@ -218,21 +287,37 @@ main {
       right: 0;
       bottom: 0;
       left: 0;
+      transform: skew(-30deg);
+      background-color: var(--theme-color);
+      transition: .3s ease;
     }
 
-    .middle-divider {
+    &::after {
+      content: attr(data-text) '';
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100%;
-      transform: rotate(-60deg) translate(-50%, -50%);
-      transform-origin: 0 0;
-      z-index: 1;
-      text-align: start;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transform: rotate(210deg);
+      display: flex;
+      align-items: center;
       color: white;
-      font-family: Myriad;
+      font-size: 1.2rem;
+      font-family: FunctionBook;
+      text-transform: uppercase;
+      writing-mode: vertical-lr;
+      transition: .3s ease;
     }
 
+    // background-image: linear-gradient(-60deg, var(--background-color) calc(50% - var(--divider) / 2 - 1px), var(--theme-color) calc(50% - var(--divider) / 2), var(--theme-color) calc(50% + var(--divider) / 2), transparent calc(50% + var(--divider) / 2 + 1px));
+  }
+
+  .divider-visual {
+    width: 100%;
+    height: 100%;
+    transform: rotate(30deg) translate(50%, 0);
+    z-index: 1;
   }
 }
 </style>
