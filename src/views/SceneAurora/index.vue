@@ -2,6 +2,7 @@
 import { ref, onMounted, watch, nextTick } from 'vue'
 import CVisual from '@/components/CVisual.vue';
 import CDigitalClock from '@/components/CDigitalClock.vue';
+import CBackground from '@/components/CBackground.vue';
 import image from '@/assets/bg2.png'
 // @ts-ignore
 import ColorThief from 'colorthief/dist/color-thief.mjs'
@@ -31,12 +32,12 @@ async function getPalette(img: HTMLImageElement): Promise<number[][]> {
   const colorThief = new ColorThief();
   const primaryColor: number[] = colorThief.getColor(img)
   const palette: number[][] = colorThief.getPalette(img);
-  // const darkPalette = palette.filter(
-  //   color => color.reduce((a, b) => a + b) < primaryColor.reduce((a, b) => a + b))
-  // darkPalette.unshift(colorThief.getColor(img))
-  // return darkPalette
-  palette.unshift(primaryColor)
-  return palette.sort((ca, cb) => ca.reduce((a, b) => a + b) - cb.reduce((a, b) => a + b))
+  const darkPalette = palette.filter(
+    color => color.reduce((a, b) => a + b) < primaryColor.reduce((a, b) => a + b))
+  darkPalette.unshift(colorThief.getColor(img))
+  return darkPalette
+  // palette.unshift(primaryColor)
+  // return palette.sort((ca, cb) => ca.reduce((a, b) => a + b) - cb.reduce((a, b) => a + b))
 }
 const rgbToHex = (r: number, g: number, b: number) => '#' + [r, g, b].map(x => {
   const hex = x.toString(16)
@@ -78,14 +79,14 @@ window.wallpaperRegisterMediaTimelineListener && window.wallpaperRegisterMediaTi
 </script>
 
 <template lang="pug">
-main(:style="`--theme-color: ${getColor(0)}; --background: url(${image})`")
+main(:style="`--theme-color: ${getColor(0)};`")
   img(ref="imageRef" :src="image" style="display: none;")
-  .background  
-  .frontground
+  CBackground(:src="image")
+  .frontground 
     .divider(data-text="by Nyarray")
     .title {{ mediaProperties?.title ?? 'Unknown' }}
     .datetime 
-      CDigitalClock(format="hh:mm:ss").time 
+      CDigitalClock(format="hh:mm:ss").time  
       CDigitalClock(format="yyyy-MM-dd").date
     .thumbnail(v-if="mediaThumbnail && mediaThumbnail.thumbnail")
       //- img(:src="`data:image;base64,${mediaThumbnail?.thumbnail ?? ''}`")
@@ -158,7 +159,6 @@ main {
   background-color: var(--theme-color);
 }
 
-.background,
 .frontground {
   width: 100%;
   height: 100%;
@@ -239,20 +239,6 @@ main {
     background-color: var(--theme-color);
   }
 }
-
-
-.background {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-image: var(--background);
-  background-position: -25% 0;
-  background-size: contain;
-  overflow: hidden;
-}
-
 .frontground {
   --divider: 3%;
   position: absolute;
