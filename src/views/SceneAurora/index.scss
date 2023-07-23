@@ -1,0 +1,291 @@
+@font-face {
+  font-family: Limerick;
+  src: url('@/assets/limerick-serial-bold.ttf');
+}
+
+@font-face {
+  font-family: Myriad;
+  src: url('@/assets/MYRIADPRO-REGULAR.OTF');
+}
+
+@font-face {
+  font-family: FunctionBook;
+  src: url('@/assets/Function-Book.ttf');
+}
+
+@font-face {
+  font-family: FunctionPro;
+  src: url('@/assets/FunctionPro-Bold.otf');
+}
+
+.side {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-image: linear-gradient(90deg, rgba(240, 240, 240, .25) 0%, transparent 100%);
+  z-index: 12;
+
+  .side-line {
+
+    width: 3px;
+    height: 100%;
+    background-color: black;
+    border-radius: 1px;
+    margin-left: 3rem;
+
+  }
+
+  .side-start {
+    flex: 6;
+    display: flex;
+    .side-color {
+      display: flex;
+      margin-top: 1.5rem;
+      height: 12rem;
+      font-family: FunctionBook;
+      .side-color-title {
+        margin: 0 0 0 1.5rem;
+        padding: .5rem 0;
+        color: white;
+        background-color: black;
+        white-space: nowrap;
+        writing-mode: vertical-rl;
+        text-transform: uppercase;
+        border-radius: .25rem;
+      }
+      .side-color-value {
+        display: flex;
+        align-items: flex-end;
+        writing-mode: vertical-rl;
+        color: black;
+        font-size: 1.75rem;
+        letter-spacing: 2px;
+
+        &::before {
+          content: '#';
+          font-size: 2.2rem;
+          font-family: Myriad;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+
+  .side-middle {
+    padding: 4rem 0 4rem 0;
+    writing-mode: vertical-rl;
+    margin-left: 1.875rem;
+
+    .side-timeline {
+      font-family: Limerick;
+      font-size: 1.5rem;
+
+    }
+  }
+
+  .side-end {
+    flex: 5;
+    display: flex;
+
+    .side-music-title {
+      margin: 1rem 0;
+      font-family: FunctionBook;
+      font-size: 3rem;
+      writing-mode: vertical-rl;
+      white-space: nowrap;
+      max-height: 40vh;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+
+}
+
+.thumbnail {
+  position: absolute;
+  width: 128px;
+  height: 128px;
+  right: 4%;
+  top: 28%;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: ease .5s;
+  }
+}
+
+main {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.frontground {
+  width: 100%;
+  height: 100%;
+  transition: .3s ease;
+}
+
+.title {
+  position: absolute;
+  right: 4%;
+  top: 48%;
+  max-width: 40%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-family: Limerick;
+  font-size: 5rem;
+  font-style: oblique;
+  color: var(--thumbnail-color);
+}
+
+.datetime {
+  position: absolute;
+  right: 4%;
+  bottom: 10%;
+  line-height: 1.5rem;
+  color: var(--thumbnail-color);
+  font-family: Myriad;
+  font-style: italic;
+  text-align: end;
+  transition: .3s ease;
+  letter-spacing: 2px;
+
+  .time {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    
+  }
+
+  .date {
+    font-size: 1.5rem;
+  }
+}
+
+.info {
+  --info-padding-right: 4vw;
+  --info-text-shadow: 0 0 1px var(--thumbnail-color);
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 4vh 0 0 0;
+  color: var(--thumbnail-color);
+  text-align: end;
+  font-family: Myriad;
+  font-size: 1.5rem;
+  font-weight: bolder;
+  font-style: italic;
+  z-index: 11;
+
+  .info-header {
+    padding-right: var(--info-padding-right);
+    font-size: 1rem;
+    font-family: FunctionPro;
+    font-style: normal;
+    transition: .3s ease;
+  }
+
+  .info-text {
+    padding-right: var(--info-padding-right);
+    font-size: 1.25rem;
+    text-shadow: var(--info-text-shadow);
+    transition: .3s ease;
+  }
+
+  .info-title {
+    padding-right: var(--info-padding-right);
+    font-size: 1.5rem;
+    text-shadow: var(--info-text-shadow);
+    transition: .3s ease;
+  }
+
+  .info-divider {
+    margin-left: 4vw;
+    height: 2px;
+    background-color: var(--thumbnail-color);
+    transition: .3s ease;
+  }
+}
+
+.frontground {
+  --divider: 3%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+  transform: translateX(8%);
+  animation: fade 2s ease-in-out .25s forwards;
+  // background-image: linear-gradient(-60deg, var(--background-color) calc(50% - var(--divider) / 2 - 1px), var(--theme-color) calc(50% - var(--divider) / 2), var(--theme-color) calc(50% + var(--divider) / 2), transparent calc(50% + var(--divider) / 2 + 1px));
+  background-image: linear-gradient(-60deg, var(--blank-color) 50%, transparent 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @keyframes fade {
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  .divider {
+    position: absolute;
+    width: 3rem;
+    height: 100%;
+    z-index: 10;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transform: skew(-30deg);
+      background-color: var(--background-color);
+      transition: .3s ease;
+    }
+
+    &::after {
+      content: attr(data-text) '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transform: rotate(210deg);
+      display: flex;
+      align-items: center;
+      color: var(--blank-color);
+      font-size: 1rem;
+      margin: 5rem 0 5rem 0;
+      // font-family: FunctionBook;Limerick
+      // font-family: Limerick;
+      font-family: Limerick;
+      // font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      writing-mode: vertical-lr;
+      transition: .3s ease;
+    }
+
+    // background-image: linear-gradient(-60deg, var(--background-color) calc(50% - var(--divider) / 2 - 1px), var(--theme-color) calc(50% - var(--divider) / 2), var(--theme-color) calc(50% + var(--divider) / 2), transparent calc(50% + var(--divider) / 2 + 1px));
+  }
+
+  .divider-visual {
+    width: 100%;
+    height: 100%;
+    transform: rotate(30deg) translate(50%, 0);
+    z-index: 1;
+  }
+}

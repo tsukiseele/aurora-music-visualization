@@ -24,6 +24,7 @@ const lineNumbers = 128;
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 .music-visual {
   height: auto;
