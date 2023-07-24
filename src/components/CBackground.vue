@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, toRefs, watch, onMounted, computed, onUnmounted } from 'vue'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   src: string,
-}>()
+  angle: number,
+}>(), {
+  angle: 30,
+})
 
 const { src } = toRefs(props);
 const backgroundRef = ref<HTMLImageElement>()
@@ -21,7 +24,7 @@ const backgroundRef = ref<HTMLImageElement>()
 </script>
 
 <template lang="pug">
-.background(ref="root") 
+.background(ref="root" :style="`--tan: ${Math.tan(Math.PI / 180 * angle)}`") 
   img(ref='backgroundRef' :data-src="src" alt="")
 </template>
 
@@ -35,7 +38,7 @@ const backgroundRef = ref<HTMLImageElement>()
    height: 100%;
    pointer-events: none;
    img {
-     width: calc(50% + 0.57735 * 50vh);
+     width: calc(50% + var(--tan) * 50vh);
      height: 100%;
      object-fit: cover;
    }

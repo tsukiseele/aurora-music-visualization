@@ -18,6 +18,9 @@ const mediaThumbnail = ref<WallpaperEngineMediaThumbnail>()
 const mediaPlayback = ref<WallpaperEngineMediaPlayback>()
 const mediaTimeline = ref<WallpaperEngineMediaTimeline>()
 
+const angle = 32;
+const blankColor = '#EFEFEF'
+
 onMounted(async () => {
   const colors = await getPalette(imageRef.value!);
   backgroundPalette.value = colors
@@ -82,9 +85,9 @@ window.wallpaperRegisterMediaTimelineListener && window.wallpaperRegisterMediaTi
 </script>
 
 <template lang="pug">
-main(:style="`--background-color: ${getBackgroundColor(0)}; --thumbnail-color: ${getThumbnailColor(0)}; --blank-color: #EFEFEF`")
+main(:style="`--background-color: ${getBackgroundColor(0)}; --thumbnail-color: ${getThumbnailColor(0)}; --angle: ${angle}deg; --blank-color: ${blankColor};`")
   img(ref="imageRef" :src="image" style="display: none;")
-  CBackground(:src="image")
+  CBackground(:src="image" :angle="angle")
   .frontground 
     .divider(data-text="Twitter | Nyarray")
     .title {{ mediaProperties?.title ?? 'Unknown' }}

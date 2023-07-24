@@ -32,7 +32,6 @@ function formatDate(format: string) {
   line-height: 1.5rem;
   color: var(--thumbnail-color);
   font-family: Myriad;
-  font-style: italic;
   text-align: end;
   transition: .3s ease;
   letter-spacing: 2px;
@@ -41,11 +40,11 @@ function formatDate(format: string) {
     font-size: 2.5rem;
     font-weight: bold;
     margin-bottom: 1rem;
-    
   }
 
   .date {
     font-size: 1.5rem;
+    font-style: italic;
   }
 }
 </style>

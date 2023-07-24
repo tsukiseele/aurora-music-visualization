@@ -18,11 +18,18 @@
   src: url('@/assets/FunctionPro-Bold.otf');
 }
 
+main {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .side {
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
+  width: 25%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -40,18 +47,19 @@
   }
 
   .side-start {
-    flex: 6;
+    flex: 7;
     display: flex;
     .side-color {
       display: flex;
-      margin-top: 1.5rem;
-      height: 12rem;
+      margin-top: 2rem;
+      height: 11rem;
       font-family: FunctionBook;
       .side-color-title {
         margin: 0 0 0 1.5rem;
         padding: .5rem 0;
         color: white;
         background-color: black;
+        font-size: .875rem;
         white-space: nowrap;
         writing-mode: vertical-rl;
         text-transform: uppercase;
@@ -62,12 +70,12 @@
         align-items: flex-end;
         writing-mode: vertical-rl;
         color: black;
-        font-size: 1.75rem;
+        font-size: 1.875rem;
         letter-spacing: 2px;
 
         &::before {
           content: '#';
-          font-size: 2.2rem;
+          font-size: 2.25rem;
           font-family: Myriad;
           font-weight: bold;
         }
@@ -76,7 +84,7 @@
   }
 
   .side-middle {
-    padding: 4rem 0 4rem 0;
+    padding: 6rem 0 6rem 0;
     writing-mode: vertical-rl;
     margin-left: 1.875rem;
 
@@ -94,7 +102,7 @@
     .side-music-title {
       margin: 1rem 0;
       font-family: FunctionBook;
-      font-size: 3rem;
+      font-size: 4rem;
       writing-mode: vertical-rl;
       white-space: nowrap;
       max-height: 40vh;
@@ -120,12 +128,6 @@
   }
 }
 
-main {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-
 .frontground {
   width: 100%;
   height: 100%;
@@ -142,7 +144,8 @@ main {
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
   overflow: hidden;
-  font-family: Limerick;
+  font-family: Limerick, 'MiSans', 'Microsoft Yahei', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   font-size: 5rem;
   font-style: oblique;
   color: var(--thumbnail-color);
@@ -204,7 +207,7 @@ main {
   transform: translateX(8%);
   animation: fade 2s ease-in-out .25s forwards;
   // background-image: linear-gradient(-60deg, var(--background-color) calc(50% - var(--divider) / 2 - 1px), var(--theme-color) calc(50% - var(--divider) / 2), var(--theme-color) calc(50% + var(--divider) / 2), transparent calc(50% + var(--divider) / 2 + 1px));
-  background-image: linear-gradient(-60deg, var(--blank-color) 50%, transparent 50%);
+  background-image: linear-gradient(calc(-90deg + var(--angle)), var(--blank-color) 50%, transparent 50%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -217,9 +220,10 @@ main {
 
   .divider {
     position: absolute;
-    width: 3rem;
+    width: 3.5rem;
     height: 100%;
     z-index: 10;
+    transform: translateX(-25%);
 
     &::before {
       content: '';
@@ -228,7 +232,7 @@ main {
       right: 0;
       bottom: 0;
       left: 0;
-      transform: skew(-30deg);
+      transform: skew(calc(-1 * var(--angle)));
       background-color: var(--background-color);
       transition: .3s ease;
     }
@@ -240,14 +244,13 @@ main {
       right: 0;
       bottom: 0;
       left: 0;
-      transform: rotate(210deg);
+      transform: rotate(calc(180deg + var(--angle)));
       display: flex;
       align-items: center;
       color: var(--blank-color);
       font-size: 1rem;
       margin: 5rem 0 5rem 0;
-      // font-family: FunctionBook;Limerick
-      // font-family: Limerick;
+      // font-family: FunctionBook;
       font-family: Limerick;
       // font-weight: bold;
       letter-spacing: 1px;
@@ -262,7 +265,7 @@ main {
   .divider-visual {
     width: 100%;
     height: 100%;
-    transform: rotate(30deg) translate(50%, 0);
+    transform: rotate(var(--angle)) translate(50%, 0);
     z-index: 1;
   }
 }
