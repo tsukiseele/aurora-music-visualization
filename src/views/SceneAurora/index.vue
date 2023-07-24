@@ -88,9 +88,7 @@ main(:style="`--background-color: ${getBackgroundColor(0)}; --thumbnail-color: $
   .frontground 
     .divider(data-text="Twitter | Nyarray")
     .title {{ mediaProperties?.title ?? 'Unknown' }}
-    .datetime 
-      CDigitalClock(format="hh:mm:ss").time  
-      CDigitalClock(format="yyyy-MM-dd").date
+    CDigitalClock.clock(format="h:mm:ss|dddd, MMMM Do YYYY")
     .thumbnail(v-if="mediaThumbnail && mediaThumbnail.thumbnail")
       //- img(:src="`data:image;base64,${mediaThumbnail?.thumbnail ?? ''}`")
       img(ref="thumbnailRef" :src="mediaThumbnail?.thumbnail ?? ''")
