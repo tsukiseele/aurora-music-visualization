@@ -111,14 +111,9 @@ main(:style="`--background-color: ${getBackgroundColor(0)}; --thumbnail-color: $
         .side-color-value {{ rgbArrToHex(backgroundPalette[0]).slice(1) }}
     .side-middle
       .side-timeline(v-show="mediaTimeline") {{ mediaTimeline ? `${mediaTimeline.position / 60} : ${(mediaTimeline.position % 60 + '').padEnd(2, '0')}` : '0:00' }}
-      //- .side-timeline {{ mediaTimeline }}
     .side-end 
       .side-line 
       .side-music-title {{ mediaProperties?.title ?? 'Unknown' }}
-
-      //- .side-color-title Theme
-      //- .side-color-value(v-if="backgroundPalette && backgroundPalette.length > 2")
-      //-   span(v-for="color in backgroundPalette" :style="{backgroundColor: rgbArrToHex(color)}") {{ rgbArrToHex(color) }}
 </template>  
  
 <style lang="scss" scoped>
