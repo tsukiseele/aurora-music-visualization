@@ -3,7 +3,7 @@ import { ref, onMounted, watch, nextTick } from 'vue'
 import CVisual from '@/components/CVisual.vue';
 import CDigitalClock from '@/components/CDigitalClock.vue';
 import CBackground from '@/components/CBackground.vue';
-import image from '@/assets/bg2.png'
+import image from '@/assets/bg3.png'
 import { rgbToHex, rgbToStr, rgbArrToHex, rgbArrToStr } from '@/utils/color'
 // @ts-ignore
 import ColorThief from 'colorthief/dist/color-thief.mjs'
