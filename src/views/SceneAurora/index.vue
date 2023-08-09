@@ -20,8 +20,13 @@ const mediaTimeline = ref<WallpaperEngineMediaTimeline>()
 
 const angle = 32;
 const blankColor = '#EFEFEF'
+const dividerLength = ref(0)
+const maxLineHeight = ref(0)
 
 onMounted(async () => {
+  dividerLength.value = document.body.clientHeight * 1.1 / Math.cos(Math.PI / 180 * angle)
+  maxLineHeight.value = document.body.clientWidth * 0.2
+
   const colors = await getPalette(imageRef.value!);
   backgroundPalette.value = colors
   thumbnailPalette.value = colors
@@ -63,29 +68,34 @@ function getThumbnailColor(index: number): string {
 function getBackgroundColor(index: number): string {
   return backgroundPalette.value && backgroundPalette.value.length > index ? rgbArrToStr(backgroundPalette.value[index]) : '';
 }
-// setInterval(() => data.value = Array.from({ length: 128 }, () => Math.random() * 0.1), 33)
+
+// const randomWave = () => {
+//   data.value = Array.from({ length: 128 }, () => Math.random() * 1)
+//   requestAnimationFrame(randomWave)
+// }
+// randomWave()
 
 window.wallpaperRegisterAudioListener && window.wallpaperRegisterAudioListener(waveArray => data.value = waveArray);
 window.wallpaperRegisterMediaStatusListener && window.wallpaperRegisterMediaStatusListener(event => {
 
-});
+})
 window.wallpaperRegisterMediaPropertiesListener && window.wallpaperRegisterMediaPropertiesListener(event => {
-  mediaProperties.value = event;
-});
+  mediaProperties.value = event
+})
 window.wallpaperRegisterMediaThumbnailListener && window.wallpaperRegisterMediaThumbnailListener(event => {
-  mediaThumbnail.value = event;
-});
+  mediaThumbnail.value = event
+})
 window.wallpaperRegisterMediaPlaybackListener && window.wallpaperRegisterMediaPlaybackListener(event => {
-  mediaPlayback.value = event;
-});
+  mediaPlayback.value = event
+})
 window.wallpaperRegisterMediaTimelineListener && window.wallpaperRegisterMediaTimelineListener(event => {
-  mediaTimeline.value = event;
-});
+  mediaTimeline.value = event
+})
 
 </script>
 
 <template lang="pug">
-main(:style="`--background-color: ${getBackgroundColor(0)}; --thumbnail-color: ${getThumbnailColor(0)}; --angle: ${angle}deg; --blank-color: ${blankColor};`")
+main(:style="`--background-color: ${getBackgroundColor(0)}; --thumbnail-color: ${getThumbnailColor(0)}; --angle: ${angle}deg; --blank-color: ${blankColor}; --divider-length: ${dividerLength}px`")
   img(ref="imageRef" :src="image" style="display: none;")
   CBackground(:src="image" :angle="angle")
   .frontground 
@@ -102,7 +112,7 @@ main(:style="`--background-color: ${getBackgroundColor(0)}; --thumbnail-color: $
       .info-divider  
       //- .info-text Ai绘画：Stella
       .info-text {{ mediaProperties?.contentType ?? 'Unknown' }} 
-    CVisual.divider-visual(:data="data" :lineStyles="{ backgroundColor: getThumbnailColor(1) }") 
+    CVisual.divider-visual(:data="data" :maxLineHeight="maxLineHeight" :lineStyles="{ backgroundColor: getThumbnailColor(1), width: Math.floor(dividerLength / 100) + 'px' }") 
   .side
     .side-start 
       .side-line 
