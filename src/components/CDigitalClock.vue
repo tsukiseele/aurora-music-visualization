@@ -30,7 +30,7 @@ function formatDate(format: string) {
   right: 4%;
   bottom: 10%;
   line-height: 1.5rem;
-  color: var(--thumbnail-color);
+  color: var(--background-color);
   font-family: Myriad;
   text-align: end;
   transition: .3s ease;

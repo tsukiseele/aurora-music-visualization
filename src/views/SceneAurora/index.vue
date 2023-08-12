@@ -112,9 +112,9 @@ main(:style="`--background-color: ${getBackgroundColor(0)}; --thumbnail-color: $
       .info-divider  
       //- .info-text Ai绘画：Stella
       .info-text {{ mediaProperties?.contentType ?? 'Unknown' }} 
-    CVisual.divider-visual(:data="data" :maxLineHeight="maxLineHeight" :lineStyles="{ backgroundColor: getThumbnailColor(1), width: Math.floor(dividerLength / 100) + 'px' }") 
+    CVisual.divider-visual(:data="data" :maxLineHeight="maxLineHeight" :lineStyles="{ backgroundColor: getBackgroundColor(0), width: Math.floor(dividerLength / 100) + 'px' }") 
   .side
-    .side-start 
+    .side-start  
       .side-line 
       .side-color
         .side-color-title COLOR VALUE
